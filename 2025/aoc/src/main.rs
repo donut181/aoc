@@ -33,14 +33,28 @@ fn process(input: &str) -> (i32, i32) {
     println!("The dial starts by pointing at {}.", current);
     for instr in instructions {
         let mut flag = 0;
+        let mut i = instr.steps;
         if instr.direction == b'L' {
-            current -= instr.steps;
-            while current < 0 {current += 100; num_of_zeros_b += 1; flag += 1;}
+            while i > 0 {
+                current -= 1;
+                if current == -1 {current += 100}
+                if current == 0 {num_of_zeros_b += 1; flag += 1}
+                i -= 1;
+            }
         } else {
-            current += instr.steps;
-            while current > 99 {current -= 100; num_of_zeros_b += 1; flag += 1;}
+            while i > 0 {
+                current += 1;
+                if current == 100 {current -= 100}
+                if current == 0 {num_of_zeros_b += 1; flag += 1}
+                i -= 1;
+            }
         }
-        if current == 0 { num_of_zeros_a += 1; flag -= 1; }
+        if current == 0 {
+            num_of_zeros_a += 1;
+            if flag != 0 {
+                flag -= 1;
+            }
+        }
         print!("The dial is rotated {}{} to point at {}", instr.direction as char, instr.steps, current);
         if flag != 0 {print!("; during this rotation, it points at 0 {} times", flag)}
         println!()
