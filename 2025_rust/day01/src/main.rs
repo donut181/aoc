@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 fn main() {
-    let input = include_str!("../../input.txt");
+    let input = include_str!("../input.txt");
     println!("Wynik to {:?}", process(input));
 }
 
@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let input = include_str!("../../input_test.txt");
+        let input = include_str!("../input_test.txt");
         assert_eq!(process(input), (3, 6))
     }
 }
