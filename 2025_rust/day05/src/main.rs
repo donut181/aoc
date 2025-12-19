@@ -68,11 +68,11 @@ fn solve2(input: &str) -> i64 {
         let mut merged = false;
         let mut counter = 0;
         'outer: while counter < ranges.len() {
-            let current = ranges.swap_remove(0);
+            let current: Range = ranges.remove(0);
             for j in 0..ranges.len() {
                 match current.merge(&ranges[j]) {
                     Some(r) => {
-                        ranges.swap_remove(j);
+                        ranges.remove(j);
                         ranges.push(r);
                         merged = true;
                         break 'outer
