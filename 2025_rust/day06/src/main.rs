@@ -1,6 +1,7 @@
 fn main() {
     let input = include_str!("../input.txt");
     println!("Wynik 1: {}", solve1(input));
+    println!("Wynik 2: {}", solve2(input));
 }
 
 fn solve1(input: &str) -> i64 {
@@ -27,29 +28,43 @@ fn solve1(input: &str) -> i64 {
 }
 
 fn solve2(input: &str) -> i64 {
-    let data:Vec<&str> = input.lines().collect();
+    let data: Vec<Vec<char>> = input
+        .lines()
+        .map(|l| l.chars().collect())
+        .collect();
     let len = data[0].len();
     let height = data.len();
+    let mut results: Vec<i64> = Vec::new();
     let mut current_nums: Vec<i64> = Vec::new();
     let mut current_op = '+';
-    for c in len-1..0 {
-        let mut column: Vec<char> = Vec::new();
-        match data[height-1].chars()[c] {
-            ' ' => 
-        }
-        for i in 0..height-1 {
-            match data[i].chars().nth(c).expect("Coulnd't get nth char") {
-                ' ' => continue,
-                i => column.push(i),
-                _ => panic!("Shouldn't happen"),
-            }
-            if column.len() > 0 {
-                current_nums.push(column.iter().collect::<String>().parse::<i64>().expect("Couldn't parse i64"));
-            }
 
+    for c in 0..=len {
+        if c == len || data.iter().all(|row| row[c] == ' ') {
+            // finish current "column"
+            results.push(
+                match current_op {
+                    '+' => current_nums.iter().sum(),
+                    '*' => current_nums.iter().product(),
+                    _ => panic!("Unknown op"),
+                }
+            );
+
+            if c == len {break}
+
+            current_nums = Vec::new();
+            continue;
         }
+        if data[height - 1][c] != ' ' {current_op = data[height - 1][c]}
+
+        current_nums.push(
+            (0..height-1).map(|i| &data[i])
+            .map(|row| row[c])
+            .collect::<String>()
+            .trim()
+            .parse::<i64>().expect(&format!("Couldn't parse column {}", c))
+        );
     }
-    1234
+    results.iter().sum()
 }
 
 #[cfg(test)]
@@ -69,7 +84,7 @@ mod tests {
         let input = include_str!("../input-test.txt");
         assert_eq!(
             solve2(input),
-            14
+            3263827
         )
     }
 }
