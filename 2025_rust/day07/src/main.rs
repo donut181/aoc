@@ -8,7 +8,7 @@ fn solution1(input: &str) -> i32 {
     let mut lines: Vec<Vec<char>> = input.lines().map(|l| l.chars().collect()).collect();
     let mut num_of_splits = 0;
     for i in 1..lines.len() {
-        println!("{}", lines[i-1].iter().collect::<String>());
+        // println!("{}", lines[i-1].iter().collect::<String>());
         for j in 0..lines[0].len() {
             if lines[i-1][j] == 'S' || lines[i-1][j] == '|' {
                 if lines[i][j] != '^' {
@@ -28,42 +28,32 @@ fn solution1(input: &str) -> i32 {
     num_of_splits
 }
 
-fn solution2(input: &str) -> i32 {
+fn solution2(input: &str) -> u64 {
     let lines: Vec<Vec<char>> = input.lines().map(|l| l.chars().collect()).collect();
     let line_length = lines[0].len();
     let s_pos = lines[0].iter().position(|c| *c == 'S').expect("Couldn't find S");
-    let mut positions = vec![s_pos];
-    let mut dups = 0;
+    let mut num_of_photons: Vec<u64>= vec![0; line_length];
+    num_of_photons[s_pos] += 1;
     for i in 1..lines.len() {
-        let mut new_positions: Vec<usize> = Vec::new();
-        for p in &positions {
-            if lines[i][*p] == '.' {
-                if new_positions.contains(p) {
-                    dups += 1;
-                } else {
-                    new_positions.push(*p);
+        let mut new_num_of_photons: Vec<u64> = vec![0; line_length];
+        for (j, num) in num_of_photons.iter().enumerate() {
+            if *num > 0 {
+                if lines[i][j] == '.' {
+                    new_num_of_photons[j] += *num;
                 }
-            }
-            if lines[i][*p] == '^' {
-                if *p > 0 {
-                    if new_positions.contains(&(*p - 1)) {
-                        dups += 1;
-                    } else {
-                        new_positions.push(*p - 1);
+                if lines[i][j] == '^' {
+                    if j > 0 {
+                        new_num_of_photons[j - 1] += *num;
                     }
-                }
-                if *p < line_length -1 {
-                    if new_positions.contains(&(*p + 1)) {
-                        dups += 1;
-                    } else {
-                        new_positions.push(*p + 1);
+                    if j < line_length -1 {
+                        new_num_of_photons[j + 1] += *num;
                     }
                 }
             }
         }
-        positions = new_positions;
+        num_of_photons = new_num_of_photons;
     }
-    positions.len() as i32 + dups
+    num_of_photons.iter().sum()
 }
 
 #[cfg(test)]
